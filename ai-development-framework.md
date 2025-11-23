@@ -55,6 +55,10 @@ graph TD
 - **Trigger**: Automatically required when n+1 Project Designers exist
 - **Output**: Integration requirements, interface contracts, cross-domain coordination
 - **Scope**: Inter-domain communication and dependency management
+- **Key Processes**:
+  - Dependency graph maintenance (PDs report changes, PM audits weekly)
+  - Priority conflict escalation (competing Critical requests go to Lead Architect)
+  - Shared resource management (databases, caches, message queues)
 
 ### Project Designer(s)
 - **Responsibility**: Generate detailed implementation instructions for specific feature domains
@@ -110,21 +114,29 @@ sequenceDiagram
 project-root/
 ├── instruct.md                          # Lead Architect instructions
 ├── pm/
-│   └── instruct.md                      # Project Manager coordination
+│   ├── instruct.md                      # Project Manager coordination
+│   ├── contracts/                       # Shared interface contracts
+│   ├── coordination-queue/              # Incoming requests from domains
+│   ├── escalations/                     # Issues escalated to Lead Architect
+│   ├── decisions/                       # Documented coordination decisions
+│   └── to-domains/                      # PM requests to specific domains
 ├── domains/
 │   ├── authentication/
 │   │   ├── instruct.md                  # PD instructions for auth domain
+│   │   ├── pm-requests/                 # Requests to PM (dep changes, blockers)
 │   │   ├── coders/
 │   │   │   ├── coder-1-instruct.md     # Specific coder tasks
 │   │   │   └── coder-2-instruct.md
 │   │   └── src/                         # Implementation code
 │   ├── payments/
 │   │   ├── instruct.md
+│   │   ├── pm-requests/
 │   │   ├── coders/
 │   │   │   └── coder-1-instruct.md
 │   │   └── src/
 │   └── analytics/
 │       ├── instruct.md
+│       ├── pm-requests/
 │       └── src/
 └── integration/
     └── tests/                           # Cross-domain integration tests
@@ -153,7 +165,7 @@ flowchart LR
 Each role is considered "done" when:
 
 1. **Lead Architect**: All necessary PDs have been spawned with clear instruct.md files
-2. **Project Manager**: All inter-domain interfaces are defined and documented
+2. **Project Manager**: All inter-domain interfaces are defined and documented; dependency graph is current; no unresolved priority conflicts
 3. **Project Designer**: Detailed coder instructions are complete and unambiguous
 4. **Coder**: All tasks in instruct.md are implemented and committed
 
@@ -188,6 +200,22 @@ When a domain becomes too complex, a PD can spawn sub-PDs, creating deeper hiera
 - **Testing**: pytest + human validation
 - **Documentation**: Markdown (instruct.md files)
 - **Orchestration**: Git hooks / CI/CD watching instruct.md changes
+
+## Automation Hooks
+
+The framework uses git-triggered automation to coordinate work:
+
+| File Pattern | Action |
+|--------------|--------|
+| `pm/instruct.md` | Spawn PM Claude Code session |
+| `pm/coordination-queue/*.md` | Notify PM of new request |
+| `pm/contracts/*.json` | Run contract validation |
+| `pm/escalations/*.md` | Notify Lead Architect |
+| `domains/*/instruct.md` | Spawn PD Claude Code session |
+| `domains/*/pm-requests/*.md` | Notify PM of domain request |
+| `integration/tests/**/*.py` | Run integration test suite |
+
+Automation creates files in appropriate directories rather than external notifications—keeping everything git-driven and auditable.
 
 ## Benefits
 
