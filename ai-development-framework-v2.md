@@ -77,6 +77,7 @@ A streamlined, git-driven framework for building complex software using AI codin
   - A pipeline connecting multiple stages is complete
   - N+1 stages have been completed
   - Before major deployments
+- **Fresh Session Recommended**: Start a new PT session for each testing phase. Test output is verbose — live test results, logs, and diagnostics fill context windows quickly. A fresh session ensures the tester isn't working with truncated context or forgotten earlier findings.
 
 ### Feature Manager (FM)
 - **Type**: AI Session (as needed)
@@ -109,6 +110,7 @@ A streamlined, git-driven framework for building complex software using AI codin
   - After significant new functionality
   - On version bumps (optional but recommended)
   - When security concerns arise
+- **Fresh Session Recommended**: Start a new SA session for each audit. Security analysis generates verbose output — code review findings, vulnerability details, and proof-of-concept exploits fill context quickly.
 
 ## Workflow
 
@@ -690,18 +692,49 @@ Deploys to Render with PostgreSQL add-on, Celery workers on separate dyno.
 
 ---
 
+## Best Practices
+
+### Fresh Sessions for Testing
+Start a **new Project Tester session for each testing phase**. Test output is verbose — live test results, logs, stack traces, and diagnostics fill context windows quickly. A tester working with a cluttered context will miss findings or lose track of earlier analysis.
+
+### When to Start Fresh vs. Continue
+| Scenario | Recommendation |
+|----------|----------------|
+| New testing phase | Fresh PT session |
+| Version bump test | Fresh PT session (mandatory) |
+| Debugging a specific issue found by PT | Can continue same session |
+| Stage Manager completing tasks | Continue until stage complete |
+| Stage Manager context getting long | Split remaining work into sub-stage |
+
+### Context Window Management
+- **Stage Managers**: If a stage is filling context before completion, it's too big — split into sub-stages
+- **Project Tester**: Fresh session per testing phase
+- **Security Auditor**: Fresh session per audit
+- **Feature Manager**: Fresh session per feature request (they're usually independent)
+
+### Document Everything
+AI sessions are stateless — documentation is the only memory. When in doubt, over-document:
+- Stage Managers update `project-state.md` thoroughly
+- Testers produce detailed reports
+- Feature Managers document their reasoning
+- All decisions should be traceable through git history
+
+---
+
 ## Quick Start Checklist
 
 1. [ ] Create `docs/` folder in your project
-2. [ ] Start VL + Lead Architect session → produce `project-plan.md`
-3. [ ] Start VL + Project Planner session → produce stage breakdown
-4. [ ] Create `stage-1-instruct.md`
-5. [ ] Start Stage Manager 1 session
-6. [ ] SM1 completes → updates `project-state.md` → commits
-7. [ ] VL + PP review → create next stage instructions
-8. [ ] Repeat until all stages complete
-9. [ ] Invoke Project Tester as needed
-10. [ ] Invoke Project Deployer when ready
+2. [ ] (Optional) Start Vision Assistant session → produce `vision-document.md`
+3. [ ] Start VL + Lead Architect session → produce `project-plan.md` + `deploy-instruct.md`
+4. [ ] Start VL + Project Planner session → produce stage breakdown + contracts
+5. [ ] Create `stage-1-instruct.md`
+6. [ ] Start Stage Manager 1 session (on `stage-1` branch)
+7. [ ] SM1 completes → updates `project-state.md` → commits
+8. [ ] VL + PP review → merge to main → create next stage instructions
+9. [ ] Repeat until all stages complete
+10. [ ] Invoke fresh Project Tester session at each testing phase
+11. [ ] Invoke Security Auditor before major deployment
+12. [ ] Invoke Project Deployer when ready
 
 ---
 
