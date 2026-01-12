@@ -71,8 +71,17 @@ A streamlined, git-driven framework for building complex software using AI codin
 
 ### Project Tester (PT)
 - **Type**: AI Session #3
-- **Responsibility**: Test and troubleshoot after stages or pipelines complete
-- **Output**: Test results, bug reports, fix recommendations
+- **Responsibility**: Test pipelines, find bugs, **fix bugs**, and document the process
+- **Can Edit Code**: Yes — PT is authorized to fix bugs they discover
+- **Output**:
+  - Test documentation in `vibration-plan/tests/` (one file per pipeline tested)
+  - Bug fixes committed to the codebase
+  - High-level summary in `project-state.md`
+- **Documentation Cycle**: For each bug found:
+  1. Found bug: [description]
+  2. Proposed fix: [approach]
+  3. Implemented fix: [what was changed]
+  4. Result: Fixed / Not fixed (if not fixed, repeat)
 - **Invoked**: At VL's discretion, typically when:
   - A pipeline connecting multiple stages is complete
   - N+1 stages have been completed
@@ -111,6 +120,26 @@ A streamlined, git-driven framework for building complex software using AI codin
   - On version bumps (optional but recommended)
   - When security concerns arise
 - **Fresh Session Recommended**: Start a new SA session for each audit. Security analysis generates verbose output — code review findings, vulnerability details, and proof-of-concept exploits fill context quickly.
+
+### Handoff Tester (HT)
+- **Type**: AI Session (as needed)
+- **Responsibility**: Work with the actual end user to document UX feedback and improvement suggestions
+- **Can Edit Code**: No — documentation only
+- **Input**: `project-plan.md`, `project-state.md`, deployed/running system
+- **Output**:
+  - UX feedback documentation in `vibration-plan/ux-feedback/`
+  - High-level summary in `project-state.md`
+- **Invoked**: When human experience testing is needed (typically after deployment or during UAT)
+- **Works With**: The actual end user — facilitates and documents their feedback
+- **Issues Route To**:
+  - UX improvements → Feature Manager (these are feature requests, not bugs)
+  - Bugs discovered → Project Planner → Stage Manager
+- **Documentation Format**: For each feedback item:
+  1. User observed: [what the user experienced]
+  2. User expected: [what they thought should happen]
+  3. Recommendation: [suggested improvement]
+  4. Priority: High / Medium / Low
+- **Fresh Session Recommended**: Start a new HT session for each testing phase with an end user.
 
 ## Workflow
 
@@ -196,14 +225,20 @@ project-root/
 ├── vibration-plan/                  # AI instructions (GIT-IGNORED)
 │   ├── vision-document.md           # VL + VA output (optional, pre-architecture)
 │   ├── project-plan.md              # VL + LA output (architecture, stack, features)
-│   ├── project-state.md             # Living doc, updated by SMs after each stage
+│   ├── project-state.md             # Living doc, updated by SMs and PT
 │   ├── deploy-instruct.md           # Instructions for Project Deployer
 │   ├── stage-instructions/
 │   │   ├── stage-1-instruct.md      # VL + PP create these
 │   │   ├── stage-2-instruct.md
 │   │   └── ...
-│   └── contracts/                   # PP creates interface contracts
-│       ├── user-api-contract.md
+│   ├── contracts/                   # PP creates interface contracts
+│   │   ├── user-api-contract.md
+│   │   └── ...
+│   ├── tests/                       # PT documents pipeline tests here
+│   │   ├── pipeline-test-[name].md  # One file per pipeline tested
+│   │   └── ...
+│   └── ux-feedback/                 # HT documents user feedback here
+│       ├── ux-session-[date].md     # One file per feedback session
 │       └── ...
 ├── src/                             # Project source (structure from project-plan.md)
 │   └── [whatever LA + VL defined]
@@ -509,6 +544,7 @@ Stage 3: Frontend
 | Version bump | Fresh Project Tester session (full system test) |
 | Before major deployment | Security Auditor session (recommended) |
 | Security concerns arise | Security Auditor session |
+| Human experience testing needed | Handoff Tester session (with end user) |
 | Ready to deploy | Project Deployer session (using LA's deploy-instruct.md) |
 
 ## Versioning

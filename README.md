@@ -16,7 +16,8 @@ Instead of one AI session trying to do everything, you (the Vision Lead) collabo
 | **Project Planner** | AI | Breaks project into stages, creates contracts and SM instructions, manages merges |
 | **Stage Manager** | AI | Implements one stage, writes tests, updates project state |
 | **Feature Manager** | AI | Assesses mid-development feature requests, drafts insertion plans |
-| **Project Tester** | AI | Tests integrations and pipelines between stages |
+| **Project Tester** | AI | Tests pipelines, finds and fixes bugs, documents in vibration-plan/tests/ |
+| **Handoff Tester** | AI | Works with end user to document UX feedback in vibration-plan/ux-feedback/ |
 | **Security Auditor** | AI | Reviews system for vulnerabilities and security risks |
 | **Project Deployer** | AI | Deploys via MCP (Cloudflare, GitHub, Render, etc.) |
 
@@ -65,10 +66,14 @@ project-root/
 │   ├── deploy-instruct.md
 │   ├── stage-instructions/
 │   │   └── stage-N-instruct.md
-│   └── contracts/
-│       └── [interface contracts]
+│   ├── contracts/
+│   │   └── [interface contracts]
+│   ├── tests/              # PT documents pipeline tests here
+│   │   └── pipeline-test-[name].md
+│   └── ux-feedback/        # HT documents user feedback here
+│       └── ux-session-[date].md
 ├── src/                    # Structure defined in project-plan.md
-├── tests/
+├── tests/                  # Test files (SMs write these)
 ├── .env.example            # Environment template (committed)
 ├── .env                    # Actual secrets (git-ignored)
 ├── .gitignore              # Must include: vibration-plan/, .env
@@ -128,6 +133,7 @@ Stage 1 (SM1)
 | `project-planner-prompt.md` | Prompt for breaking project into stages + contracts |
 | `feature-manager-prompt.md` | Prompt to assess and plan mid-development feature requests |
 | `project-tester-prompt.md` | Prompt for integration and pipeline testing |
+| `handoff-tester-prompt.md` | Prompt for UX testing with end users |
 | `security-auditor-prompt.md` | Prompt for security vulnerability review |
 
 *Note: Stage Manager prompts are created by the Project Planner for each specific stage. The Project Deployer prompt is created by the Lead Architect as `deploy-instruct.md`.*
