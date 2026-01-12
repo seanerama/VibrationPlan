@@ -189,9 +189,11 @@ A streamlined, git-driven framework for building complex software using AI codin
 
 The codebase uses the **natural structure** defined by VL + LA. No artificial stage folders — stages are a coordination concept, not a folder hierarchy.
 
+**Important**: The `vibration-plan/` folder contains all AI instructions and methodology documentation. It is **always git-ignored** — the framework stays invisible in the final project repository.
+
 ```
 project-root/
-├── docs/
+├── vibration-plan/                  # AI instructions (GIT-IGNORED)
 │   ├── vision-document.md           # VL + VA output (optional, pre-architecture)
 │   ├── project-plan.md              # VL + LA output (architecture, stack, features)
 │   ├── project-state.md             # Living doc, updated by SMs after each stage
@@ -208,6 +210,7 @@ project-root/
 ├── tests/                           # Test files (SMs write these)
 ├── .env.example                     # Environment template (committed)
 ├── .env                             # Actual secrets (git-ignored)
+├── .gitignore                       # Must include: vibration-plan/, .env
 └── [other dirs as defined in project-plan.md]
 ```
 
@@ -299,7 +302,7 @@ Created by VL + Project Planner. Contains:
 # Stage N: [Stage Name]
 
 ## Context
-[Brief: what the overall project is, link to project-plan.md]
+[Brief: what the overall project is, link to vibration-plan/project-plan.md]
 
 ## Stage Objective
 [What this stage accomplishes]
@@ -327,12 +330,50 @@ Created by VL + Project Planner. Contains:
 ## Completion Criteria
 [How to know this stage is done]
 
-## On Completion
-Update `project-state.md` with:
-- What was implemented
-- How to run it
-- What's exposed for next stages
-- Test coverage summary
+## Git Instructions
+
+### Branch
+Create and work on branch: `stage-N`
+
+### On Completion
+1. Commit all changes with clear commit messages
+2. Update `vibration-plan/project-state.md` with:
+   - What was implemented
+   - How to run it
+   - What's exposed for next stages
+   - Test coverage summary
+3. Push branch and notify VL + PP
+
+## Pipeline Testing
+
+**Pipeline test required after this stage**: YES / NO
+
+[If YES]
+**Reason**: [Why this stage triggers a pipeline test - e.g., "Completes the auth → API → database pipeline"]
+**What to test**: [Specific integration points the Project Tester should validate]
+
+[If NO]
+Next stage may proceed immediately after merge.
+```
+
+**Note for Stage 1**: The first stage instruction should also include git initialization:
+
+```markdown
+## Git Initialization (Stage 1 Only)
+
+This stage initializes the repository:
+
+1. Run `git init`
+2. Create `.gitignore`:
+   ```
+   # Framework documentation (kept separate from project)
+   vibration-plan/
+
+   # Secrets
+   .env
+   ```
+3. Create initial project structure
+4. Make first commit to `stage-1` branch
 ```
 
 ### project-state.md
@@ -501,25 +542,87 @@ Recommended: [Semantic Versioning](https://semver.org/)
 - **Minor (0.X.0)**: New features, deployment changes
 - **Patch (0.0.X)**: Bug fixes (rare at this level — usually handled in stages)
 
-## Git Branching Strategy
+## Git Workflow
+
+### Stage 1: Repository Initialization
+
+**Stage 1 is responsible for git setup.** Since Stage 1 typically creates the file structure, it also:
+
+1. Runs `git init`
+2. Creates `.gitignore` with required entries:
+   ```
+   # Framework documentation (kept separate from project)
+   vibration-plan/
+
+   # Secrets
+   .env
+   ```
+3. Creates initial project structure
+4. Makes the first commit
 
 ### Branch Structure
 ```
 main (protected)
   │
-  ├── stage-1 (SM1 works here)
+  ├── stage-1 (SM1 works here — includes git init)
   ├── stage-2 (SM2 works here)
   ├── stage-3 (SM3 works here)
   │
   └── VL + PP merge into main after review
 ```
 
-### Workflow
+### Stage Execution Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Stage Manager completes stage                                  │
+│      │                                                          │
+│      ▼                                                          │
+│  Commit to branch                                               │
+│      │                                                          │
+│      ▼                                                          │
+│  ┌──────────────────────────────────────┐                      │
+│  │ Pipeline test required?              │                      │
+│  │ (specified at end of SM prompt by PP)│                      │
+│  └──────────────────────────────────────┘                      │
+│      │                    │                                     │
+│      │ NO                 │ YES                                 │
+│      ▼                    ▼                                     │
+│  Next stage begins   VL invokes Project Tester                  │
+│                          │                                      │
+│                          ▼                                      │
+│                      PT validates pipeline                      │
+│                          │                                      │
+│                          ▼                                      │
+│                      Issues resolved → Next stage begins        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Workflow Steps
 1. **SM creates branch** from main (e.g., `stage-1`)
-2. **SM commits** all implementation work to their branch
-3. **SM completes** → notifies VL + PP
-4. **VL + PP review** → merge into main
-5. **Dependent stages** pull from main after their dependencies merge
+2. **SM implements** the stage on their branch
+3. **SM commits** with clear commit messages
+4. **SM completes** → checks prompt for pipeline test requirement
+5. **If no pipeline test**: Next stage can begin immediately
+6. **If pipeline test required**: VL invokes Project Tester first
+7. **VL + PP review** → merge into main
+8. **Dependent stages** pull from main after their dependencies merge
+
+### Pipeline Test Triggers
+
+**Project Planner specifies pipeline test points** at the end of each Stage Manager prompt:
+
+```markdown
+## Pipeline Testing
+
+**Pipeline test required after this stage**: YES / NO
+
+[If YES]
+**Reason**: This stage completes the [X → Y → Z] pipeline.
+**What to test**: [Specific integration points to validate]
+```
+
+This ensures Stage Managers know whether to wait for testing before the next stage proceeds.
 
 ### Merge Order
 PP determines merge sequence based on dependencies:
@@ -559,7 +662,7 @@ Document the approach in `project-plan.md` under Constraints & Considerations.
 Contracts define interfaces between stages to prevent drift and miscommunication.
 
 ### Ownership
-**Project Planner** creates and maintains contracts in `docs/contracts/`.
+**Project Planner** creates and maintains contracts in `vibration-plan/contracts/`.
 
 ### When to Create Contracts
 - When Stage B depends on Stage A's output
@@ -588,7 +691,7 @@ Contracts define interfaces between stages to prevent drift and miscommunication
 
 ### Contract Location
 ```
-docs/
+vibration-plan/
 ├── contracts/
 │   ├── user-api-contract.md
 │   ├── payment-event-schema.md
@@ -723,18 +826,20 @@ AI sessions are stateless — documentation is the only memory. When in doubt, o
 
 ## Quick Start Checklist
 
-1. [ ] Create `docs/` folder in your project
+1. [ ] Create `vibration-plan/` folder in your project (this stays git-ignored)
 2. [ ] (Optional) Start Vision Assistant session → produce `vision-document.md`
 3. [ ] Start VL + Lead Architect session → produce `project-plan.md` + `deploy-instruct.md`
 4. [ ] Start VL + Project Planner session → produce stage breakdown + contracts
-5. [ ] Create `stage-1-instruct.md`
+5. [ ] Create `stage-1-instruct.md` (include git init instructions)
 6. [ ] Start Stage Manager 1 session (on `stage-1` branch)
-7. [ ] SM1 completes → updates `project-state.md` → commits
-8. [ ] VL + PP review → merge to main → create next stage instructions
-9. [ ] Repeat until all stages complete
-10. [ ] Invoke fresh Project Tester session at each testing phase
-11. [ ] Invoke Security Auditor before major deployment
-12. [ ] Invoke Project Deployer when ready
+7. [ ] SM1 initializes git, creates `.gitignore` (with `vibration-plan/`), builds stage
+8. [ ] SM1 completes → updates `project-state.md` → commits → checks if pipeline test required
+9. [ ] **If pipeline test required**: VL invokes Project Tester before next stage
+10. [ ] **If no pipeline test**: Next stage proceeds immediately
+11. [ ] VL + PP review → merge to main → create next stage instructions
+12. [ ] Repeat until all stages complete
+13. [ ] Invoke Security Auditor before major deployment
+14. [ ] Invoke Project Deployer when ready
 
 ---
 

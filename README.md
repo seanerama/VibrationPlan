@@ -59,7 +59,7 @@ Ship           →  Project Deployer    →  production
 
 ```
 project-root/
-├── docs/
+├── vibration-plan/         # AI instructions (GIT-IGNORED)
 │   ├── project-plan.md
 │   ├── project-state.md
 │   ├── deploy-instruct.md
@@ -71,8 +71,11 @@ project-root/
 ├── tests/
 ├── .env.example            # Environment template (committed)
 ├── .env                    # Actual secrets (git-ignored)
+├── .gitignore              # Must include: vibration-plan/, .env
 └── ...
 ```
+
+**Note**: The `vibration-plan/` folder is always git-ignored. The framework stays invisible in the final project repository — only your actual code gets committed.
 
 ## Versioning
 
@@ -82,15 +85,37 @@ Version bumps are **rare** — only for major architectural or deployment change
 
 **Effect of version bump**: Spawns a fresh Project Tester session that does a full system test with no assumptions from prior testing.
 
+## Git Workflow
+
+```
+Stage 1 (SM1)
+├── git init
+├── Create .gitignore (includes vibration-plan/)
+├── Build file structure
+├── Commit to stage-1 branch
+└── Pipeline test required? (specified in prompt by PP)
+    ├── NO  → Next stage begins
+    └── YES → VL invokes Project Tester first
+```
+
+**Key rules:**
+- Stage 1 initializes the git repository
+- `vibration-plan/` is always in `.gitignore`
+- Project Planner specifies pipeline test points at the end of each SM prompt
+- Stage Managers commit to their branches, never to main
+- VL + PP handle all merges to main
+
 ## Getting Started
 
 1. **Have a rough idea?** Paste `vision-assistant-prompt.md` → produce `vision-document.md`
 2. **Ready for architecture?** Paste `lead-architect-prompt.md` → produce `project-plan.md` + `deploy-instruct.md`
 3. **Break it down:** Paste `project-planner-prompt.md` → produce stage instructions + contracts
-4. **Build stages:** Start Stage Manager sessions → implement on branches
-5. **Merge & test:** VL + PP merge to main → invoke Tester when pipelines connect
-6. **Security check:** Invoke Security Auditor before major deployments
-7. **Deploy:** Invoke Project Deployer with `deploy-instruct.md`
+4. **Build Stage 1:** SM1 runs `git init`, creates `.gitignore`, builds structure
+5. **Continue stages:** Each SM works on branch → commits → checks if pipeline test required
+6. **Test when needed:** If PP marked pipeline test, invoke Tester before next stage
+7. **Merge & repeat:** VL + PP merge to main → create next stage instructions
+8. **Security check:** Invoke Security Auditor before major deployments
+9. **Deploy:** Invoke Project Deployer with `deploy-instruct.md`
 
 ## Files in This Repo
 
