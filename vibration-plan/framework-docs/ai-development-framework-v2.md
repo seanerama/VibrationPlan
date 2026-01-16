@@ -223,6 +223,14 @@ The codebase uses the **natural structure** defined by VL + LA. No artificial st
 ```
 project-root/
 ├── vibration-plan/                  # AI instructions (GIT-IGNORED)
+│   ├── prompts/                     # Framework prompts (from fork)
+│   │   ├── lead-architect-prompt.md
+│   │   ├── project-planner-prompt.md
+│   │   ├── project-tester-prompt.md
+│   │   └── ...
+│   ├── framework-docs/              # Framework reference
+│   │   ├── README.md
+│   │   └── ai-development-framework-v2.md
 │   ├── vision-document.md           # VL + VA output (optional, pre-architecture)
 │   ├── project-plan.md              # VL + LA output (architecture, stack, features)
 │   ├── project-state.md             # Living doc, updated by SMs and PT
