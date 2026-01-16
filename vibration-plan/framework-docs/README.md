@@ -13,6 +13,7 @@ Instead of one AI session trying to do everything, you (the Vision Lead) collabo
 | **Vision Lead** | Human (you) | Hub of all decisions, works with every AI session |
 | **Vision Assistant** | AI | Helps VL explore and clarify ideas before architecture |
 | **Lead Architect** | AI | Co-designs project plan with you (tech stack, features, structure, standards) |
+| **Retrofit Planner** | AI | Analyzes existing codebase, documents state, plans changes (replaces VA + LA for existing projects) |
 | **Project Planner** | AI | Breaks project into stages, creates contracts and SM instructions, manages merges |
 | **Stage Manager** | AI | Implements one stage, writes tests, updates project state |
 | **Feature Manager** | AI | Assesses mid-development feature requests, drafts insertion plans |
@@ -142,6 +143,7 @@ Stage 1 (SM1)
 |------|-------------|
 | `vision-assistant-prompt.md` | Prompt to explore and clarify an idea (before LA) |
 | `lead-architect-prompt.md` | Prompt to design architecture and deployment |
+| `retrofit-planner-prompt.md` | Prompt to analyze existing codebase and plan changes |
 | `project-planner-prompt.md` | Prompt for breaking project into stages + contracts |
 | `feature-manager-prompt.md` | Prompt to assess and plan mid-development feature requests |
 | `project-tester-prompt.md` | Prompt for integration and pipeline testing |

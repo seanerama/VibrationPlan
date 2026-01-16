@@ -48,6 +48,23 @@ A streamlined, git-driven framework for building complex software using AI codin
   - Deployment strategy changes (new platform, scaling needs)
 - **Session Ends**: After project plan and deploy prompt are approved (re-invoked only if needed)
 
+### Retrofit Planner (RP)
+- **Type**: AI Session #1 (alternative for existing projects)
+- **Responsibility**: Analyze existing codebase and plan modifications/enhancements
+- **Replaces**: Vision Assistant + Lead Architect (for existing projects)
+- **Output**:
+  - `project-plan.md` (documenting existing architecture, tech stack, structure)
+  - `project-state.md` (current state of the system)
+  - High-level change goals (what VL wants to modify/enhance/refactor)
+- **Invoked**: When applying VibrationPlan to an existing project (not built with this framework)
+- **Workflow**:
+  1. Analyze existing codebase thoroughly
+  2. Document what exists in `project-plan.md` and `project-state.md`
+  3. Work with VL to define desired changes
+  4. Document change goals, scope, constraints, and risks
+  5. Hand off to Project Planner to create stages
+- **Session Ends**: After documentation is complete and VL approves the change plan
+
 ### Project Planner (PP)
 - **Type**: AI Session #2
 - **Responsibility**: Break the project into stages, create Stage Manager instructions
@@ -540,6 +557,7 @@ Stage 3: Frontend
 
 | Trigger | Action |
 |---------|--------|
+| **Existing project to modify** | **VL + Retrofit Planner session (replaces VA + LA)** |
 | Have a rough idea | VL + Vision Assistant session (optional) |
 | Vision clarified | VL + Lead Architect session |
 | Project plan approved | VL + Project Planner session |
