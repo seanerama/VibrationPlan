@@ -77,14 +77,18 @@ vibration-plan/
 my-new-project/
 ├── vibration-plan/                  # GIT-IGNORED (all AI stuff stays here)
 │   ├── prompts/                     # Framework prompts
+│   │   ├── vision-assistant-prompt.md
 │   │   ├── lead-architect-prompt.md
+│   │   ├── ui-ux-designer-prompt.md
 │   │   ├── retrofit-planner-prompt.md  # For existing projects
 │   │   ├── project-planner-prompt.md
+│   │   ├── feature-manager-prompt.md
+│   │   ├── merge-manager-prompt.md
 │   │   ├── project-tester-prompt.md
 │   │   ├── handoff-tester-prompt.md
-│   │   ├── feature-manager-prompt.md
+│   │   ├── technical-writer-prompt.md
 │   │   ├── security-auditor-prompt.md
-│   │   └── vision-assistant-prompt.md
+│   │   └── sre-prompt.md
 │   ├── framework-docs/              # Framework reference
 │   │   ├── README.md                # Detailed framework overview
 │   │   └── ai-development-framework-v2.md
@@ -113,20 +117,27 @@ You (Vision Lead)
      ├── Vision Assistant ──→ Clarify your idea (optional)
      │
      ├── Lead Architect ────→ project-plan.md + deploy-instruct.md
+     │   (parallel)
+     ├── UI/UX Designer ────→ design-system.md
      │
      ├── Project Planner ───→ Stage instructions + contracts
      │
      ├── Stage Managers ────→ Implementation (one per stage)
      │         │
-     │         └── Commit to branch → merge to main
+     │         ├── Commit to branch → merge to main
+     │         └── Merge conflicts? → Merge Manager
      │
      ├── Project Tester ────→ Test pipelines, fix bugs
      │
      ├── Handoff Tester ────→ UX feedback with end users
      │
+     ├── Technical Writer ──→ Public docs (README, API docs, user guides)
+     │
      ├── Security Auditor ──→ Security review (before deployment)
      │
-     └── Project Deployer ──→ Deploy via MCP
+     ├── Project Deployer ──→ Deploy via MCP
+     │
+     └── SRE ──────────────→ Day 2 ops (monitoring, backups, recovery)
 ```
 
 ### Existing Projects
@@ -148,14 +159,18 @@ You (Vision Lead)
 | **Vision Lead** | You — hub of all decisions |
 | **Vision Assistant** | Helps clarify ideas before architecture |
 | **Lead Architect** | Co-designs project plan (tech stack, features, structure) |
+| **UI/UX Designer** | Defines visual system and UX (parallel with LA) |
 | **Retrofit Planner** | Analyzes existing codebase, documents state, plans changes (replaces VA + LA) |
 | **Project Planner** | Breaks project into stages, creates contracts |
 | **Stage Manager** | Implements one stage, writes tests |
 | **Feature Manager** | Assesses mid-development feature requests |
+| **Merge Manager** | Resolves merge conflicts between parallel branches |
 | **Project Tester** | Tests pipelines, finds and fixes bugs |
 | **Handoff Tester** | Documents UX feedback with end users |
+| **Technical Writer** | Creates public docs (README, API docs, user guides) |
 | **Security Auditor** | Reviews for vulnerabilities |
 | **Project Deployer** | Deploys via MCP |
+| **SRE** | Post-deployment ops — monitoring, updates, disaster recovery |
 
 ## Key Principles
 

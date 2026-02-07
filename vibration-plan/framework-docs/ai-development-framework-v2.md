@@ -48,6 +48,16 @@ A streamlined, git-driven framework for building complex software using AI codin
   - Deployment strategy changes (new platform, scaling needs)
 - **Session Ends**: After project plan and deploy prompt are approved (re-invoked only if needed)
 
+### UI/UX Designer (UD)
+- **Type**: AI Session (parallel with Lead Architect)
+- **Responsibility**: Define the visual system and user experience before code is written
+- **Input**: `vision-document.md`, `project-plan.md`
+- **Output**: `design-system.md` (committed to git — part of the project, not the framework)
+- **Contents**: Color palette, typography, spacing, component specs (states, interactions), asset requirements, UX flows, accessibility guidelines
+- **Invoked**: Pre-implementation, parallel with Lead Architect
+- **What Happens After**: Project Planner references `design-system.md` when creating stage instructions; Stage Managers implement using the specifications
+- **Note**: `design-system.md` goes at the project root — it IS committed to git (unlike vibration-plan/)
+
 ### Retrofit Planner (RP)
 - **Type**: AI Session #1 (alternative for existing projects)
 - **Responsibility**: Analyze existing codebase and plan modifications/enhancements
@@ -119,6 +129,22 @@ A streamlined, git-driven framework for building complex software using AI codin
   3. If approved → PP integrates into stages
 - **Escalates to LA**: If feature requires architectural changes
 
+### Merge Manager (MM)
+- **Type**: AI Session (as needed)
+- **Responsibility**: Resolve merge conflicts when parallel Stage Managers create conflicting changes
+- **Input**: Conflicting branches, git diffs, `project-state.md`, stage instructions, contracts
+- **Output**:
+  - Resolved merge commit
+  - Merge report in `vibration-plan/tests/merge-report-[branches].md`
+  - Updated `project-state.md` reflecting combined state
+- **Invoked**: When parallel branches have merge conflicts that can't be auto-resolved
+- **Workflow**:
+  1. Analyze what each branch changed and why
+  2. Resolve conflicts (combine, pick one side, or rewrite)
+  3. Verify tests still pass post-merge
+  4. Update project-state.md with combined state
+- **Escalates to VL**: If conflicts require architectural decisions
+
 ### Project Deployer (PD)
 - **Type**: AI Session #4
 - **Responsibility**: Deploy the system using available infrastructure
@@ -157,6 +183,38 @@ A streamlined, git-driven framework for building complex software using AI codin
   3. Recommendation: [suggested improvement]
   4. Priority: High / Medium / Low
 - **Fresh Session Recommended**: Start a new HT session for each testing phase with an end user.
+
+### Technical Writer (TW)
+- **Type**: AI Session (post-implementation)
+- **Responsibility**: Create public-facing documentation for the finished project
+- **Input**: `project-plan.md`, `project-state.md`, `src/`, `tests/`, config files
+- **Output** (committed to git — public documentation):
+  - `README.md` (project root — replaces framework README)
+  - `docs/api.md` (if library/service)
+  - `docs/user-guide.md` (if end-user facing)
+- **Invoked**: Post-implementation / pre-release, when the project needs public documentation
+- **Key Rule**: No framework leakage — never mention VibrationPlan, vibration-plan/, or internal roles in public docs
+- **Fresh Session Recommended**: Start fresh to see the project from an outsider's perspective.
+
+### Site Reliability Engineer (SRE)
+- **Type**: AI Session (post-deployment)
+- **Responsibility**: Maintain the application after deployment — monitoring, updates, disaster recovery
+- **Input**: `deploy-instruct.md`, `project-plan.md`, `project-state.md`, server logs, error reports
+- **Output** (committed to git):
+  - `recovery-plan.md` (backup, restore, failover procedures)
+  - Monitoring configuration
+  - Operational runbooks
+- **Invoked**: After Project Deployer finishes — handles "Day 2" operations
+- **Workflow**:
+  1. Set up health checks and monitoring
+  2. Configure backups and verify integrity
+  3. Create disaster recovery procedures
+  4. Document operational runbooks
+- **Escalates**:
+  - Security vulnerabilities → Security Auditor re-invoked
+  - Code bugs → Project Planner → Stage Manager
+  - Infrastructure changes → Lead Architect consulted
+- **Fresh Session Recommended**: Verbose operational data fills context quickly.
 
 ## Workflow
 
@@ -560,9 +618,11 @@ Stage 3: Frontend
 | **Existing project to modify** | **VL + Retrofit Planner session (replaces VA + LA)** |
 | Have a rough idea | VL + Vision Assistant session (optional) |
 | Vision clarified | VL + Lead Architect session |
+| Project has visual/UI requirements | VL + UI/UX Designer session (parallel with LA) |
 | Project plan approved | VL + Project Planner session |
 | Stage instruction ready | Stage Manager session |
 | Stage complete | VL + PP review, merge to main |
+| Parallel branches have merge conflicts | Merge Manager session |
 | **New feature request mid-development** | **Feature Manager session → VL + LA review → PP integrates** |
 | Pipeline connects (n+1 stages) | Consider Project Tester (VL decides) |
 | Major roadblock | Re-invoke Lead Architect |
@@ -571,7 +631,9 @@ Stage 3: Frontend
 | Before major deployment | Security Auditor session (recommended) |
 | Security concerns arise | Security Auditor session |
 | Human experience testing needed | Handoff Tester session (with end user) |
+| Project ready for public docs | Technical Writer session (pre-release) |
 | Ready to deploy | Project Deployer session (using LA's deploy-instruct.md) |
+| Post-deployment maintenance | SRE session (Day 2 operations) |
 
 ## Versioning
 

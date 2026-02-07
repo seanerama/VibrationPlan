@@ -13,14 +13,18 @@ Instead of one AI session trying to do everything, you (the Vision Lead) collabo
 | **Vision Lead** | Human (you) | Hub of all decisions, works with every AI session |
 | **Vision Assistant** | AI | Helps VL explore and clarify ideas before architecture |
 | **Lead Architect** | AI | Co-designs project plan with you (tech stack, features, structure, standards) |
+| **UI/UX Designer** | AI | Defines visual system and UX before code is written (parallel with LA) |
 | **Retrofit Planner** | AI | Analyzes existing codebase, documents state, plans changes (replaces VA + LA for existing projects) |
 | **Project Planner** | AI | Breaks project into stages, creates contracts and SM instructions, manages merges |
 | **Stage Manager** | AI | Implements one stage, writes tests, updates project state |
 | **Feature Manager** | AI | Assesses mid-development feature requests, drafts insertion plans |
+| **Merge Manager** | AI | Resolves merge conflicts when parallel Stage Managers clash |
 | **Project Tester** | AI | Tests pipelines, finds and fixes bugs, documents in vibration-plan/tests/ |
 | **Handoff Tester** | AI | Works with end user to document UX feedback in vibration-plan/ux-feedback/ |
+| **Technical Writer** | AI | Creates public-facing documentation (README, API docs, user guides) |
 | **Security Auditor** | AI | Reviews system for vulnerabilities and security risks |
 | **Project Deployer** | AI | Deploys via MCP (Cloudflare, GitHub, Render, etc.) |
+| **SRE** | AI | Post-deployment maintenance — monitoring, updates, disaster recovery |
 
 ## Workflow
 
@@ -143,12 +147,16 @@ Stage 1 (SM1)
 |------|-------------|
 | `vision-assistant-prompt.md` | Prompt to explore and clarify an idea (before LA) |
 | `lead-architect-prompt.md` | Prompt to design architecture and deployment |
+| `ui-ux-designer-prompt.md` | Prompt to define visual system and UX (parallel with LA) |
 | `retrofit-planner-prompt.md` | Prompt to analyze existing codebase and plan changes |
 | `project-planner-prompt.md` | Prompt for breaking project into stages + contracts |
 | `feature-manager-prompt.md` | Prompt to assess and plan mid-development feature requests |
+| `merge-manager-prompt.md` | Prompt to resolve merge conflicts between parallel branches |
 | `project-tester-prompt.md` | Prompt for integration and pipeline testing |
 | `handoff-tester-prompt.md` | Prompt for UX testing with end users |
+| `technical-writer-prompt.md` | Prompt for public-facing documentation |
 | `security-auditor-prompt.md` | Prompt for security vulnerability review |
+| `sre-prompt.md` | Prompt for post-deployment maintenance and operations |
 
 *Note: Stage Manager prompts are created by the Project Planner for each specific stage. The Project Deployer prompt is created by the Lead Architect as `deploy-instruct.md`.*
 
