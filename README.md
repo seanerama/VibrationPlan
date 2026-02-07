@@ -32,9 +32,10 @@ vibration-plan/
 ### 3. Start Building
 
 1. Open Claude
-2. Paste the **Lead Architect** prompt from `vibration-plan/prompts/lead-architect-prompt.md`
-3. Work with LA to create your `project-plan.md`
-4. Continue through the workflow...
+2. Paste the **Vision Assistant** prompt from `vibration-plan/prompts/vision-assistant-prompt.md`
+3. Work with VA to clarify your idea → produces `vision-document.md`
+4. Start a new Claude session with the **Lead Architect** prompt
+5. Continue through the workflow...
 
 ---
 
