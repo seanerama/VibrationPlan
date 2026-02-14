@@ -15,6 +15,7 @@ Instead of one AI session trying to do everything, you (the Vision Lead) collabo
 | **Lead Architect** | AI | Co-designs project plan with you (tech stack, features, structure, standards) |
 | **UI/UX Designer** | AI | Defines visual system and UX before code is written (parallel with LA) |
 | **Retrofit Planner** | AI | Analyzes existing codebase, documents state, plans changes (replaces VA + LA for existing projects) |
+| **Codebase Mapper** | AI | Explores codebase and produces interactive visual diagram (codebase-map.html) |
 | **Project Planner** | AI | Breaks project into stages, creates contracts and SM instructions, manages merges |
 | **Stage Manager** | AI | Implements one stage, writes tests, updates project state |
 | **Feature Manager** | AI | Assesses mid-development feature requests, drafts insertion plans |
@@ -149,6 +150,7 @@ Stage 1 (SM1)
 | `lead-architect-prompt.md` | Prompt to design architecture and deployment |
 | `ui-ux-designer-prompt.md` | Prompt to define visual system and UX (parallel with LA) |
 | `retrofit-planner-prompt.md` | Prompt to analyze existing codebase and plan changes |
+| `codebase-mapper-prompt.md` | Prompt to explore codebase and create interactive visual diagram |
 | `project-planner-prompt.md` | Prompt for breaking project into stages + contracts |
 | `feature-manager-prompt.md` | Prompt to assess and plan mid-development feature requests |
 | `merge-manager-prompt.md` | Prompt to resolve merge conflicts between parallel branches |

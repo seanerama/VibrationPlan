@@ -81,6 +81,7 @@ my-new-project/
 │   │   ├── lead-architect-prompt.md
 │   │   ├── ui-ux-designer-prompt.md
 │   │   ├── retrofit-planner-prompt.md  # For existing projects
+│   │   ├── codebase-mapper-prompt.md
 │   │   ├── project-planner-prompt.md
 │   │   ├── feature-manager-prompt.md
 │   │   ├── merge-manager-prompt.md
@@ -161,6 +162,7 @@ You (Vision Lead)
 | **Lead Architect** | Co-designs project plan (tech stack, features, structure) |
 | **UI/UX Designer** | Defines visual system and UX (parallel with LA) |
 | **Retrofit Planner** | Analyzes existing codebase, documents state, plans changes (replaces VA + LA) |
+| **Codebase Mapper** | Explores codebase, produces interactive visual diagram (codebase-map.html) |
 | **Project Planner** | Breaks project into stages, creates contracts |
 | **Stage Manager** | Implements one stage, writes tests |
 | **Feature Manager** | Assesses mid-development feature requests |

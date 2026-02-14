@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibrationPlan — Framework Diagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: #161822;
+    border-bottom: 1px solid #2a2d3a;
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+  header h1 span { color: #818cf8; }
+
+  .toggle-group {
+    display: flex;
+    background: #1e2030;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #2a2d3a;
+  }
+  .toggle-btn {
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    background: transparent;
+    color: #94a3b8;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .toggle-btn.active {
+    background: #818cf8;
+    color: #fff;
+  }
+  .toggle-btn:hover:not(.active) {
+    background: #252840;
+    color: #cbd5e1;
+  }
+
+  .main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .canvas-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .detail-panel {
+    width: 320px;
+    background: #161822;
+    border-left: 1px solid #2a2d3a;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: width 0.3s;
+  }
+  .detail-panel.collapsed { width: 0; overflow: hidden; border: none; }
+
+  .detail-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a2d3a;
+  }
+  .detail-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 2px;
+  }
+  .detail-header .phase-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
+  }
+  .detail-body {
+    padding: 16px 20px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .detail-body h3 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    margin-bottom: 6px;
+    margin-top: 16px;
+  }
+  .detail-body h3:first-child { margin-top: 0; }
+  .detail-body p, .detail-body li {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #cbd5e1;
+  }
+  .detail-body ul {
+    list-style: none;
+    padding: 0;
+  }
+  .detail-body ul li::before {
+    content: '→ ';
+    color: #818cf8;
+  }
+  .detail-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #475569;
+    font-size: 13px;
+    text-align: center;
+    padding: 20px;
+    line-height: 1.6;
+  }
+
+  .type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+  .type-human { background: #422006; color: #fbbf24; }
+  .type-ai { background: #1e1b4b; color: #a5b4fc; }
+
+  .legend {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    background: #161822ee;
+    border: 1px solid #2a2d3a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    z-index: 10;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  .zoom-controls {
+    position: absolute;
+    top: 16px;
+    right: 340px;
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+    transition: right 0.3s;
+  }
+  .zoom-controls.shifted { right: 16px; }
+  .zoom-btn {
+    width: 32px;
+    height: 32px;
+    background: #161822ee;
+    border: 1px solid #2a2d3a;
+    border-radius: 6px;
+    color: #94a3b8;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .zoom-btn:hover { background: #252840; color: #e2e8f0; }
+
+  footer {
+    padding: 12px 24px;
+    background: #161822;
+    border-top: 1px solid #2a2d3a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .prompt-output {
+    flex: 1;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 12px;
+  }
+  .copy-btn {
+    padding: 6px 16px;
+    background: #818cf8;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .copy-btn:hover { background: #6366f1; }
+  .copy-btn.copied { background: #10b981; }
+
+  @keyframes dash-flow {
+    to { stroke-dashoffset: -20; }
+  }
+  .connection-line {
+    animation: dash-flow 1.5s linear infinite;
+  }
+
+  @media (max-width: 768px) {
+    .detail-panel { width: 260px; }
+    .legend { bottom: 8px; left: 8px; padding: 8px 12px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span>VibrationPlan</span> — Framework Workflow</h1>
+  <div class="toggle-group">
+    <button class="toggle-btn active" onclick="setWorkflow('new')">New Project</button>
+    <button class="toggle-btn" onclick="setWorkflow('existing')">Existing Project</button>
+  </div>
+</header>
+
+<div class="main-layout">
+  <div class="canvas-area">
+    <svg id="canvas"></svg>
+
+    <div class="legend" id="legend"></div>
+
+    <div class="zoom-controls" id="zoom-controls">
+      <button class="zoom-btn" onclick="zoom(1.15)">+</button>
+      <button class="zoom-btn" onclick="zoom(0.87)">−</button>
+      <button class="zoom-btn" onclick="resetZoom()" style="font-size:11px">⟲</button>
+    </div>
+  </div>
+
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-empty" id="detail-empty">
+      Click any role node<br>to see details
+    </div>
+    <div id="detail-content" style="display:none">
+      <div class="detail-header" id="detail-header"></div>
+      <div class="detail-body" id="detail-body"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="prompt-output" id="prompt-output">Select a role to see details — toggle between New and Existing project workflows above.</div>
+  <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">Copy</button>
+</footer>
+
+<script>
+const PHASES = {
+  human:   { color: '#fbbf24', bg: '#422006', label: 'Human' },
+  pre:     { color: '#60a5fa', bg: '#1e3a5f', label: 'Pre-Implementation' },
+  impl:    { color: '#34d399', bg: '#064e3b', label: 'Implementation' },
+  test:    { color: '#fb923c', bg: '#7c2d12', label: 'Testing' },
+  release: { color: '#c084fc', bg: '#4c1d95', label: 'Release' },
+  post:    { color: '#f87171', bg: '#7f1d1d', label: 'Post-Deployment' }
+};
+
+const ROLES = {
+  vl: {
+    id: 'vl', label: 'Vision Lead', subtitle: 'YOU',
+    phase: 'human', type: 'Human',
+    desc: 'Central decision-maker who works directly with every AI session. You are the hub — no AI talks to another AI directly.',
+    output: ['Approvals and direction', 'Final say on all decisions'],
+    invoked: 'Always present — you drive the entire process',
+    workflows: ['new', 'existing']
+  },
+  va: {
+    id: 'va', label: 'Vision Assistant', subtitle: 'Clarify idea',
+    phase: 'pre', type: 'AI Session',
+    desc: 'Helps you explore and clarify a rough idea before committing to architecture. Optional but recommended when the idea is still fuzzy.',
+    output: ['vision-document.md'],
+    invoked: 'When you have a rough idea that needs development',
+    workflows: ['new']
+  },
+  la: {
+    id: 'la', label: 'Lead Architect', subtitle: 'Architecture & stack',
+    phase: 'pre', type: 'AI Session',
+    desc: 'Co-designs the project foundation with you — tech stack, architecture, features, and deployment strategy.',
+    output: ['project-plan.md', 'deploy-instruct.md'],
+    invoked: 'After vision is clarified, or at project start',
+    workflows: ['new']
+  },
+  ud: {
+    id: 'ud', label: 'UI/UX Designer', subtitle: 'Visual system',
+    phase: 'pre', type: 'AI Session',
+    desc: 'Defines the Visual Stack — colors, typography, spacing, component specifications, and UX flows. Runs in parallel with Lead Architect.',
+    output: ['design-system.md (committed to git)'],
+    invoked: 'Pre-implementation, parallel with Lead Architect',
+    workflows: ['new']
+  },
+  rp: {
+    id: 'rp', label: 'Retrofit Planner', subtitle: 'Analyze & plan',
+    phase: 'pre', type: 'AI Session',
+    desc: 'Analyzes an existing codebase, documents the current state, and works with you to define desired changes. Replaces Vision Assistant + Lead Architect for existing projects.',
+    output: ['project-plan.md', 'project-state.md', 'Change goals'],
+    invoked: 'When applying VibrationPlan to an existing project',
+    workflows: ['existing']
+  },
+  pp: {
+    id: 'pp', label: 'Project Planner', subtitle: 'Stages & contracts',
+    phase: 'pre', type: 'AI Session',
+    desc: 'Breaks the project into stages, creates interface contracts between them, and writes detailed instructions for each Stage Manager.',
+    output: ['stage-N-instruct.md', 'contracts/*.md'],
+    invoked: 'After project plan exists',
+    workflows: ['new', 'existing']
+  },
+  sm: {
+    id: 'sm', label: 'Stage Managers', subtitle: 'Build each stage',
+    phase: 'impl', type: 'AI Session',
+    desc: 'Each Stage Manager implements one stage — writing code, tests, and updating the living project state document. They work on branches and commit their own code.',
+    output: ['Implementation code', 'Tests', 'project-state.md updates'],
+    invoked: 'When their stage-N-instruct.md is ready',
+    workflows: ['new', 'existing']
+  },
+  fm: {
+    id: 'fm', label: 'Feature Manager', subtitle: 'New feature requests',
+    phase: 'impl', type: 'AI Session',
+    desc: 'Assesses mid-development feature requests — analyzes impact, classifies risk, and drafts insertion plans without derailing the current build.',
+    output: ['Feature assessment', 'Feature plan (if approved)'],
+    invoked: 'When a new feature idea comes up during development',
+    workflows: ['new', 'existing']
+  },
+  mm: {
+    id: 'mm', label: 'Merge Manager', subtitle: 'Resolve conflicts',
+    phase: 'impl', type: 'AI Session',
+    desc: 'Resolves merge conflicts when parallel Stage Managers create conflicting changes. Reads both sides, proposes correct merged code, and ensures combined state is sound.',
+    output: ['Resolved merge', 'Merge report', 'Updated project-state.md'],
+    invoked: 'When parallel branches have merge conflicts',
+    workflows: ['new', 'existing']
+  },
+  pt: {
+    id: 'pt', label: 'Project Tester', subtitle: 'Test & fix bugs',
+    phase: 'test', type: 'AI Session',
+    desc: 'Tests pipelines between stages, finds bugs, fixes them, and documents the entire process. Each bug follows: Found → Fix → Verify → Document.',
+    output: ['Bug fixes', 'vibration-plan/tests/pipeline-test-*.md', 'project-state.md summary'],
+    invoked: 'When pipeline testing is needed (specified by Project Planner)',
+    workflows: ['new', 'existing']
+  },
+  ht: {
+    id: 'ht', label: 'Handoff Tester', subtitle: 'UX feedback',
+    phase: 'test', type: 'AI Session',
+    desc: 'Works with actual end users to document UX feedback. Cannot edit code — documentation only. Routes improvements to Feature Manager, bugs to Project Planner.',
+    output: ['vibration-plan/ux-feedback/ux-session-*.md', 'project-state.md summary'],
+    invoked: 'When human experience testing is needed',
+    workflows: ['new', 'existing']
+  },
+  tw: {
+    id: 'tw', label: 'Technical Writer', subtitle: 'Public documentation',
+    phase: 'release', type: 'AI Session',
+    desc: 'Creates public-facing documentation by analyzing the finished codebase. No framework leakage — never mentions VibrationPlan in public docs.',
+    output: ['README.md (public)', 'docs/api.md', 'docs/user-guide.md'],
+    invoked: 'Post-implementation, before release',
+    workflows: ['new', 'existing']
+  },
+  sa: {
+    id: 'sa', label: 'Security Auditor', subtitle: 'Vulnerability review',
+    phase: 'release', type: 'AI Session',
+    desc: 'Reviews the system for security vulnerabilities and risks — OWASP top 10, auth issues, injection vectors, config problems.',
+    output: ['Security audit report', 'Findings and recommendations'],
+    invoked: 'Before major deployments, after new functionality',
+    workflows: ['new', 'existing']
+  },
+  pd: {
+    id: 'pd', label: 'Project Deployer', subtitle: 'Deploy via MCP',
+    phase: 'release', type: 'AI Session',
+    desc: 'Deploys the system using available MCP servers — Cloudflare, GitHub, Render, AWS, etc. Uses the deploy-instruct.md created by Lead Architect.',
+    output: ['Deployed application', 'Deployment configs'],
+    invoked: 'When the system is ready for deployment',
+    workflows: ['new', 'existing']
+  },
+  sre: {
+    id: 'sre', label: 'SRE', subtitle: 'Day 2 operations',
+    phase: 'post', type: 'AI Session',
+    desc: 'Handles post-deployment "Day 2" operations — monitoring, backups, disaster recovery, dependency updates. Keeps the system alive after Project Deployer gets it live.',
+    output: ['recovery-plan.md', 'Monitoring config', 'Runbooks'],
+    invoked: 'After deployment — ongoing maintenance',
+    workflows: ['new', 'existing']
+  }
+};
+
+const LAYOUTS = {
+  new: [
+    { id: 'vl', x: 480, y: 40 },
+    { id: 'va', x: 480, y: 130 },
+    { id: 'la', x: 340, y: 225 },
+    { id: 'ud', x: 620, y: 225 },
+    { id: 'pp', x: 480, y: 320 },
+    { id: 'sm', x: 480, y: 415 },
+    { id: 'fm', x: 700, y: 415 },
+    { id: 'mm', x: 260, y: 415 },
+    { id: 'pt', x: 400, y: 510 },
+    { id: 'ht', x: 600, y: 510 },
+    { id: 'tw', x: 340, y: 600 },
+    { id: 'sa', x: 540, y: 600 },
+    { id: 'pd', x: 480, y: 690 },
+    { id: 'sre', x: 480, y: 775 }
+  ],
+  existing: [
+    { id: 'vl', x: 480, y: 40 },
+    { id: 'rp', x: 480, y: 150 },
+    { id: 'pp', x: 480, y: 260 },
+    { id: 'sm', x: 480, y: 360 },
+    { id: 'fm', x: 700, y: 360 },
+    { id: 'mm', x: 260, y: 360 },
+    { id: 'pt', x: 400, y: 455 },
+    { id: 'ht', x: 600, y: 455 },
+    { id: 'tw', x: 340, y: 545 },
+    { id: 'sa', x: 540, y: 545 },
+    { id: 'pd', x: 480, y: 635 },
+    { id: 'sre', x: 480, y: 720 }
+  ]
+};
+
+const CONNECTIONS = {
+  new: [
+    { from: 'vl', to: 'va', label: 'rough idea' },
+    { from: 'va', to: 'la', label: 'vision doc' },
+    { from: 'va', to: 'ud', label: 'vision doc' },
+    { from: 'la', to: 'pp', label: 'project plan' },
+    { from: 'ud', to: 'pp', label: 'design system' },
+    { from: 'pp', to: 'sm', label: 'stage instructions' },
+    { from: 'sm', to: 'fm', label: 'feature request?', style: 'dashed' },
+    { from: 'sm', to: 'mm', label: 'conflicts?', style: 'dashed' },
+    { from: 'sm', to: 'pt', label: 'pipeline test?' },
+    { from: 'sm', to: 'ht', label: 'UX review' },
+    { from: 'pt', to: 'tw' },
+    { from: 'ht', to: 'tw' },
+    { from: 'tw', to: 'sa' },
+    { from: 'tw', to: 'pd' },
+    { from: 'sa', to: 'pd' },
+    { from: 'pd', to: 'sre', label: 'deployed' }
+  ],
+  existing: [
+    { from: 'vl', to: 'rp', label: 'existing codebase' },
+    { from: 'rp', to: 'pp', label: 'plan + state' },
+    { from: 'pp', to: 'sm', label: 'stage instructions' },
+    { from: 'sm', to: 'fm', label: 'feature request?', style: 'dashed' },
+    { from: 'sm', to: 'mm', label: 'conflicts?', style: 'dashed' },
+    { from: 'sm', to: 'pt', label: 'pipeline test?' },
+    { from: 'sm', to: 'ht', label: 'UX review' },
+    { from: 'pt', to: 'tw' },
+    { from: 'ht', to: 'tw' },
+    { from: 'tw', to: 'sa' },
+    { from: 'tw', to: 'pd' },
+    { from: 'sa', to: 'pd' },
+    { from: 'pd', to: 'sre', label: 'deployed' }
+  ]
+};
+
+const state = {
+  workflow: 'new',
+  selected: null,
+  scale: 1,
+  panX: 0,
+  panY: 0
+};
+
+let isPanning = false, panStart = { x: 0, y: 0 };
+
+function setWorkflow(wf) {
+  state.workflow = wf;
+  state.selected = null;
+  document.querySelectorAll('.toggle-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', (i === 0 && wf === 'new') || (i === 1 && wf === 'existing'));
+  });
+  resetZoom();
+  render();
+  showDetail(null);
+  updatePrompt();
+}
+
+function zoom(factor) {
+  state.scale = Math.max(0.4, Math.min(2.5, state.scale * factor));
+  applyTransform();
+}
+
+function resetZoom() {
+  state.scale = 1;
+  state.panX = 0;
+  state.panY = 0;
+  applyTransform();
+}
+
+function applyTransform() {
+  const g = document.getElementById('main-group');
+  if (g) g.setAttribute('transform', `translate(${state.panX},${state.panY}) scale(${state.scale})`);
+}
+
+function render() {
+  const svg = document.getElementById('canvas');
+  const layout = LAYOUTS[state.workflow];
+  const conns = CONNECTIONS[state.workflow];
+  const nodeW = 170, nodeH = 54, nodeR = 10;
+
+  let html = `
+    <defs>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+      </filter>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#475569"/>
+      </marker>
+    </defs>
+    <g id="main-group" transform="translate(${state.panX},${state.panY}) scale(${state.scale})">
+  `;
+
+  // Draw connections
+  conns.forEach(c => {
+    const fromPos = layout.find(n => n.id === c.from);
+    const toPos = layout.find(n => n.id === c.to);
+    if (!fromPos || !toPos) return;
+
+    const x1 = fromPos.x + nodeW / 2;
+    const y1 = fromPos.y + nodeH;
+    const x2 = toPos.x + nodeW / 2;
+    const y2 = toPos.y;
+
+    const midY = (y1 + y2) / 2;
+    const dx = Math.abs(x2 - x1);
+    const cpOffset = Math.min(dx * 0.3, 40);
+
+    const isDashed = c.style === 'dashed';
+    const dashArray = isDashed ? '6,4' : '4,2';
+    const opacity = isDashed ? 0.5 : 0.6;
+
+    html += `<path d="M${x1},${y1} C${x1},${midY + cpOffset} ${x2},${midY - cpOffset} ${x2},${y2}"
+      fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="${dashArray}"
+      stroke-opacity="${opacity}" marker-end="url(#arrow)"
+      class="connection-line"/>`;
+
+    if (c.label) {
+      const lx = (x1 + x2) / 2;
+      const ly = midY;
+      html += `<text x="${lx}" y="${ly}" text-anchor="middle" fill="#64748b"
+        font-size="10" font-family="-apple-system, sans-serif">${c.label}</text>`;
+    }
+  });
+
+  // Draw nodes
+  layout.forEach(pos => {
+    const role = ROLES[pos.id];
+    if (!role) return;
+    const phase = PHASES[role.phase];
+    const isSelected = state.selected === pos.id;
+    const strokeW = isSelected ? 2.5 : 1.5;
+    const strokeColor = isSelected ? phase.color : phase.color + '88';
+    const bgColor = phase.bg;
+    const shadowFilter = isSelected ? ' filter="url(#glow)"' : '';
+
+    html += `<g class="node" data-id="${pos.id}" onclick="selectNode('${pos.id}')" style="cursor:pointer"${shadowFilter}>
+      <rect x="${pos.x}" y="${pos.y}" width="${nodeW}" height="${nodeH}" rx="${nodeR}" ry="${nodeR}"
+        fill="${bgColor}" stroke="${strokeColor}" stroke-width="${strokeW}"/>
+      <text x="${pos.x + nodeW / 2}" y="${pos.y + 22}" text-anchor="middle"
+        fill="${phase.color}" font-size="13" font-weight="600" font-family="-apple-system, sans-serif">
+        ${role.label}</text>
+      <text x="${pos.x + nodeW / 2}" y="${pos.y + 40}" text-anchor="middle"
+        fill="#94a3b8" font-size="10" font-family="-apple-system, sans-serif">
+        ${role.subtitle}</text>
+    </g>`;
+  });
+
+  html += '</g>';
+  svg.innerHTML = html;
+
+  // Render legend
+  const legend = document.getElementById('legend');
+  legend.innerHTML = Object.entries(PHASES).map(([key, p]) =>
+    `<div class="legend-item"><div class="legend-dot" style="background:${p.color}"></div>${p.label}</div>`
+  ).join('');
+}
+
+function selectNode(id) {
+  state.selected = id;
+  render();
+  showDetail(id);
+  updatePrompt();
+}
+
+function showDetail(id) {
+  const empty = document.getElementById('detail-empty');
+  const content = document.getElementById('detail-content');
+  const header = document.getElementById('detail-header');
+  const body = document.getElementById('detail-body');
+
+  if (!id) {
+    empty.style.display = 'flex';
+    content.style.display = 'none';
+    return;
+  }
+
+  const role = ROLES[id];
+  const phase = PHASES[role.phase];
+  empty.style.display = 'none';
+  content.style.display = 'block';
+
+  header.innerHTML = `
+    <h2>${role.label}</h2>
+    <span class="type-badge ${role.type === 'Human' ? 'type-human' : 'type-ai'}">${role.type}</span>
+    <div class="phase-badge" style="background:${phase.bg};color:${phase.color};border:1px solid ${phase.color}44">${phase.label}</div>
+  `;
+
+  body.innerHTML = `
+    <h3>What They Do</h3>
+    <p>${role.desc}</p>
+    <h3>Key Output</h3>
+    <ul>${role.output.map(o => `<li>${o}</li>`).join('')}</ul>
+    <h3>When Invoked</h3>
+    <p>${role.invoked}</p>
+  `;
+}
+
+function updatePrompt() {
+  const out = document.getElementById('prompt-output');
+  if (!state.selected) {
+    out.textContent = `Viewing ${state.workflow === 'new' ? 'New' : 'Existing'} Project workflow — click a role to see details.`;
+    return;
+  }
+  const role = ROLES[state.selected];
+  const outputs = role.output.join(', ');
+  out.textContent = `${role.label} (${PHASES[role.phase].label}): ${role.desc} Output: ${outputs}. Invoked: ${role.invoked}`;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('prompt-output').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+// Pan support
+const canvas = document.querySelector('.canvas-area');
+canvas.addEventListener('mousedown', e => {
+  if (e.target.closest('.node')) return;
+  isPanning = true;
+  panStart = { x: e.clientX - state.panX, y: e.clientY - state.panY };
+  canvas.style.cursor = 'grabbing';
+});
+window.addEventListener('mousemove', e => {
+  if (!isPanning) return;
+  state.panX = e.clientX - panStart.x;
+  state.panY = e.clientY - panStart.y;
+  applyTransform();
+});
+window.addEventListener('mouseup', () => {
+  isPanning = false;
+  canvas.style.cursor = '';
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoom(e.deltaY < 0 ? 1.08 : 0.93);
+}, { passive: false });
+
+// Init
+render();
+updatePrompt();
+</script>
+</body>
+</html>

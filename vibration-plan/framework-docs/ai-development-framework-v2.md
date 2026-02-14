@@ -75,6 +75,19 @@ A streamlined, git-driven framework for building complex software using AI codin
   5. Hand off to Project Planner to create stages
 - **Session Ends**: After documentation is complete and VL approves the change plan
 
+### Codebase Mapper (CM)
+- **Type**: AI Session (as needed)
+- **Responsibility**: Analyze an entire codebase and produce an interactive visual diagram
+- **Input**: Full codebase access — all source files, configs, dependencies
+- **Output**: `codebase-map.html` (committed to git — interactive single-file diagram)
+- **Contents**: Tech stack overview, architecture layers, data flow paths, user interaction maps, event/trigger outcomes
+- **Invoked**: When you need a comprehensive visual understanding of a codebase:
+  - Onboarding to an existing project
+  - Before refactoring or major changes
+  - Alongside Retrofit Planner for existing projects
+  - For team documentation and knowledge sharing
+- **Note**: The HTML diagram is self-contained (no external dependencies) and committed to git as a project reference
+
 ### Project Planner (PP)
 - **Type**: AI Session #2
 - **Responsibility**: Break the project into stages, create Stage Manager instructions
@@ -616,6 +629,7 @@ Stage 3: Frontend
 | Trigger | Action |
 |---------|--------|
 | **Existing project to modify** | **VL + Retrofit Planner session (replaces VA + LA)** |
+| Need visual map of a codebase | Codebase Mapper session → codebase-map.html |
 | Have a rough idea | VL + Vision Assistant session (optional) |
 | Vision clarified | VL + Lead Architect session |
 | Project has visual/UI requirements | VL + UI/UX Designer session (parallel with LA) |
