@@ -27,3 +27,23 @@ TIER_COLORS: dict[str, str] = {
     TIER_NEEDS_INFO: "#0028FA",
     TIER_NOT_SUPPORTED: "#F43F5E",
 }
+
+# Human-readable display names for the output spreadsheet.
+TIER_DISPLAY_NAMES: dict[str, str] = {
+    TIER_OFFICIALLY_SUPPORTED: "Officially Supported",
+    TIER_UNOFFICIALLY_SUPPORTED: "Unofficially Supported",
+    TIER_SUPPORTED_VDI: "Supported VDI VM",
+    TIER_NEEDS_REVIEW: "Needs Review with Customer",
+    TIER_NEEDS_INFO: "Needs Additional Info",
+    TIER_NOT_SUPPORTED: "Not Supported",
+}
+
+# Row background tint colors for xlsx fills (ARGB format: FF = full opacity).
+TIER_ROW_BG: dict[str, str] = {
+    TIER_OFFICIALLY_SUPPORTED: "FF052E1A",
+    TIER_UNOFFICIALLY_SUPPORTED: "FF1A0A2E",
+    TIER_SUPPORTED_VDI: "FF042322",
+    TIER_NEEDS_REVIEW: "FF2D1A00",
+    TIER_NEEDS_INFO: "FF00082F",
+    TIER_NOT_SUPPORTED: "FF2D0A14",
+}
