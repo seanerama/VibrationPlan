@@ -1,191 +1,113 @@
-# VibrationPlan
+# VME Compatibility Analyzer
 
-An AI-assisted development framework for building software with Claude.
+A hosted, browser-based internal tool for US Signal Solutions Architects. Ingests RVTools or CloudPhysics VM inventory exports, classifies each VM against the HPE VM Essentials compatibility matrix, and produces a branded Excel report.
 
-## Quick Start: New Project
+## Overview
 
-### 1. Fork or Clone This Repo
+SAs upload a VM inventory export and receive a color-coded spreadsheet with:
+- Classification of each VM into one of 6 tiers (Officially Supported → Not Supported)
+- Classification reason per VM
+- Migration path guidance per tier
+- Summary and executive summary tabs
 
-```bash
-# Option A: Fork on GitHub, then clone your fork
-git clone https://github.com/YOUR-USERNAME/VibrationPlan.git my-new-project
+## Tech Stack
 
-# Option B: Clone directly and remove git history
-git clone https://github.com/seanerama/VibrationPlan.git my-new-project
-cd my-new-project
-rm -rf .git
-git init
-```
+| Layer | Technology |
+|-------|------------|
+| Frontend | React (Vite) + CSS Custom Properties |
+| Backend | Python (FastAPI) |
+| Database | Azure SQL (Basic) — SQLite for local dev |
+| File Processing | pandas + openpyxl |
+| OS Matching | rapidfuzz |
+| Hosting | Azure App Service (Linux, B1) |
 
-### 2. Set Up .gitignore
+## Local Development
 
-Create a `.gitignore` at the root with:
+### Prerequisites
 
-```
-# AI framework (stays local, not committed)
-vibration-plan/
+- Python 3.12+
+- Node.js 18+
+- (Optional) `pyodbc` requires ODBC driver for Azure SQL in production
 
-# Secrets
-.env
-```
-
-### 3. Start Building
-
-1. Open Claude
-2. Paste the **Vision Assistant** prompt from `vibration-plan/prompts/vision-assistant-prompt.md`
-3. Work with VA to clarify your idea → produces `vision-document.md`
-4. Start a new Claude session with the **Lead Architect** prompt
-5. Continue through the workflow...
-
----
-
-## Quick Start: Existing Project
-
-Use this when you want to apply VibrationPlan to a project that already exists.
-
-### 1. Clone VibrationPlan into Your Project
+### Backend
 
 ```bash
-cd your-existing-project
-
-# Clone just the vibration-plan folder
-git clone https://github.com/seanerama/VibrationPlan.git temp-vp
-mv temp-vp/vibration-plan ./vibration-plan
-rm -rf temp-vp
+cd backend
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
 ```
 
-### 2. Add to .gitignore
+API available at `http://localhost:8000`
+Health check: `http://localhost:8000/health`
 
-Add to your existing `.gitignore`:
+### Frontend
 
-```
-# AI framework (stays local, not committed)
-vibration-plan/
-```
-
-### 3. Start with Retrofit Planner
-
-1. Open Claude
-2. Paste the **Retrofit Planner** prompt from `vibration-plan/prompts/retrofit-planner-prompt.md`
-3. Work with RP to analyze your codebase and document the current state
-4. Define what changes you want to make
-5. Then use **Project Planner** to break changes into stages
-
-## Folder Structure
-
-```
-my-new-project/
-├── vibration-plan/                  # GIT-IGNORED (all AI stuff stays here)
-│   ├── prompts/                     # Framework prompts
-│   │   ├── vision-assistant-prompt.md
-│   │   ├── lead-architect-prompt.md
-│   │   ├── ui-ux-designer-prompt.md
-│   │   ├── retrofit-planner-prompt.md  # For existing projects
-│   │   ├── codebase-mapper-prompt.md
-│   │   ├── project-planner-prompt.md
-│   │   ├── feature-manager-prompt.md
-│   │   ├── merge-manager-prompt.md
-│   │   ├── project-tester-prompt.md
-│   │   ├── handoff-tester-prompt.md
-│   │   ├── technical-writer-prompt.md
-│   │   ├── security-auditor-prompt.md
-│   │   └── sre-prompt.md
-│   ├── framework-docs/              # Framework reference
-│   │   ├── README.md                # Detailed framework overview
-│   │   └── ai-development-framework-v2.md
-│   ├── project-plan.md              # Created by Lead Architect
-│   ├── project-state.md             # Living doc, updated by SMs
-│   ├── deploy-instruct.md           # Created by Lead Architect
-│   ├── stage-instructions/          # Created by Project Planner
-│   │   └── stage-N-instruct.md
-│   ├── contracts/                   # Created by Project Planner
-│   ├── tests/                       # Project Tester documentation
-│   └── ux-feedback/                 # Handoff Tester documentation
-├── src/                             # Your project code (structure from project-plan.md)
-├── tests/                           # Your test files
-├── .gitignore                       # Must include: vibration-plan/, .env
-├── .env.example                     # Environment template (committed)
-├── .env                             # Actual secrets (git-ignored)
-└── README.md                        # Your project's README (replace this file)
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-## The Workflow
+UI available at `http://localhost:5173`
 
-### New Projects
-```
-You (Vision Lead)
-     │
-     ├── Vision Assistant ──→ Clarify your idea (optional)
-     │
-     ├── Lead Architect ────→ project-plan.md + deploy-instruct.md
-     │   (parallel)
-     ├── UI/UX Designer ────→ design-system.md
-     │
-     ├── Project Planner ───→ Stage instructions + contracts
-     │
-     ├── Stage Managers ────→ Implementation (one per stage)
-     │         │
-     │         ├── Commit to branch → merge to main
-     │         └── Merge conflicts? → Merge Manager
-     │
-     ├── Project Tester ────→ Test pipelines, fix bugs
-     │
-     ├── Handoff Tester ────→ UX feedback with end users
-     │
-     ├── Technical Writer ──→ Public docs (README, API docs, user guides)
-     │
-     ├── Security Auditor ──→ Security review (before deployment)
-     │
-     ├── Project Deployer ──→ Deploy via MCP
-     │
-     └── SRE ──────────────→ Day 2 ops (monitoring, backups, recovery)
+### Environment Variables
+
+Copy `.env.example` to `.env` in the `backend/` directory and fill in values:
+
+```bash
+cp .env.example backend/.env
 ```
 
-### Existing Projects
+Local dev works with default SQLite — no Azure SQL required.
+
+## Project Structure
+
 ```
-You (Vision Lead)
-     │
-     ├── Retrofit Planner ──→ Analyze codebase, document state, define changes
-     │                        (replaces Vision Assistant + Lead Architect)
-     │
-     ├── Project Planner ───→ Stage instructions for changes
-     │
-     └── (same as above from here)
+vme-analyzer/
+├── backend/
+│   ├── app/
+│   │   ├── main.py             # FastAPI app
+│   │   ├── config.py           # Settings from env vars
+│   │   ├── routers/            # API route handlers
+│   │   ├── services/           # Business logic
+│   │   └── models/             # SQLAlchemy ORM models
+│   ├── tests/
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── index.css           # Design system CSS variables
+│   │   ├── pages/
+│   │   └── components/
+│   └── public/assets/
+├── docs/
+│   ├── project-state.md        # Living state doc (updated each stage)
+│   ├── project-plan.md
+│   └── design-system.md
+├── .env.example
+└── README.md
 ```
 
-## Roles
+## Running Tests
 
-| Role | What They Do |
-|------|--------------|
-| **Vision Lead** | You — hub of all decisions |
-| **Vision Assistant** | Helps clarify ideas before architecture |
-| **Lead Architect** | Co-designs project plan (tech stack, features, structure) |
-| **UI/UX Designer** | Defines visual system and UX (parallel with LA) |
-| **Retrofit Planner** | Analyzes existing codebase, documents state, plans changes (replaces VA + LA) |
-| **Codebase Mapper** | Explores codebase, produces interactive visual diagram (codebase-map.html) |
-| **Project Planner** | Breaks project into stages, creates contracts |
-| **Stage Manager** | Implements one stage, writes tests |
-| **Feature Manager** | Assesses mid-development feature requests |
-| **Merge Manager** | Resolves merge conflicts between parallel branches |
-| **Project Tester** | Tests pipelines, finds and fixes bugs |
-| **Handoff Tester** | Documents UX feedback with end users |
-| **Technical Writer** | Creates public docs (README, API docs, user guides) |
-| **Security Auditor** | Reviews for vulnerabilities |
-| **Project Deployer** | Deploys via MCP |
-| **SRE** | Post-deployment ops — monitoring, updates, disaster recovery |
+```bash
+cd backend
+pytest
+```
 
-## Key Principles
+## Linting
 
-- **vibration-plan/ is git-ignored** — Framework stays invisible in your final repo
-- **Stage 1 initializes git** — Creates .gitignore with vibration-plan/ and .env
-- **Each role is a fresh Claude session** — Prevents context overload
-- **project-state.md is the living doc** — Always current, git tracks history
+```bash
+# Backend
+ruff check backend/
 
-## Documentation
+# Frontend
+cd frontend && npm run lint
+```
 
-- [Full Framework Documentation](vibration-plan/framework-docs/ai-development-framework-v2.md)
-- [Framework Overview](vibration-plan/framework-docs/README.md)
+## Deployment
 
-## After You Start Your Project
-
-Replace this README.md with your project's own README. The framework docs stay in `vibration-plan/framework-docs/` for reference.
+See `docs/deploy-instruct.md` for Azure App Service deployment instructions.
