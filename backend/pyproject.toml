@@ -1,0 +1,15 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP"]
+# UP045: X|None requires Python 3.10+; venv uses 3.9 so Optional[str] is required
+ignore = ["E501", "UP045", "B008"]  # B008: FastAPI uses Depends/File/Form in defaults intentionally
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
