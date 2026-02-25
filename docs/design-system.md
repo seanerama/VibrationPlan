@@ -1,0 +1,211 @@
+# Design System: VME Compatibility Analyzer
+
+## Branding
+
+**Project**: VME Compatibility Analyzer
+**Client**: US Signal
+**Logo asset**: `USSBlueBurst.png` — use on dark background `#0A0D12`
+
+---
+
+## Color Palette
+
+### Base
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--color-bg` | `#0A0D12` | Page background |
+| `--color-surface` | `#111827` | Cards, panels, header |
+| `--color-surface-raised` | `#1F2937` | Elevated surfaces, dropdowns |
+| `--color-surface-overlay` | `#253040` | Hover states on surfaces |
+
+### Brand
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--color-brand` | `#0028FA` | Primary actions, badges, active states |
+| `--color-brand-hover` | `#0021D4` | Hover on brand elements |
+| `--color-brand-muted` | `#00082F` | Brand tint backgrounds |
+| `--color-brand-contrast` | `#FFFFFF` | Text on brand backgrounds |
+
+### Text
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--color-text-primary` | `#F9FAFB` | Primary body text |
+| `--color-text-secondary` | `#9CA3AF` | Secondary/supporting text |
+| `--color-text-muted` | `#6B7280` | Placeholder, disabled text |
+| `--color-text-inverse` | `#0A0D12` | Text on light backgrounds |
+
+### Border
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--color-border` | `#1F2937` | Default borders |
+| `--color-border-subtle` | `#374151` | Subtle dividers |
+| `--color-border-strong` | `#4B5563` | Emphasis borders |
+
+---
+
+## Classification Tier Colors
+
+> **Note**: "Unofficially Supported" uses Violet `#8B5CF6` (this file is the source of truth). The project-plan.md listed Teal — design system wins.
+
+| Tier | Color Name | Foreground | Background Tint |
+|------|-----------|------------|-----------------|
+| Officially Supported | Emerald | `#10B981` | `#052E1A` |
+| Unofficially Supported | Violet | `#8B5CF6` | `#1E1035` |
+| Supported VDI VM | Teal | `#14B8A6` | `#042322` |
+| Needs Review with Customer | Amber | `#F59E0B` | `#2D1A00` |
+| Needs Additional Info | Brand Blue | `#0028FA` | `#00082F` |
+| Not Supported | Rose | `#F43F5E` | `#2D0A14` |
+
+CSS tokens:
+
+```css
+--color-tier-official:        #10B981;
+--color-tier-official-bg:     #052E1A;
+--color-tier-unofficial:      #8B5CF6;
+--color-tier-unofficial-bg:   #1E1035;
+--color-tier-vdi:             #14B8A6;
+--color-tier-vdi-bg:          #042322;
+--color-tier-review:          #F59E0B;
+--color-tier-review-bg:       #2D1A00;
+--color-tier-info:            #0028FA;
+--color-tier-info-bg:         #00082F;
+--color-tier-unsupported:     #F43F5E;
+--color-tier-unsupported-bg:  #2D0A14;
+```
+
+---
+
+## Typography
+
+### Typefaces
+
+| Role | Family | Weights | Usage |
+|------|--------|---------|-------|
+| Display | DM Serif Display | 400 | Page headings, report titles |
+| Body / UI | IBM Plex Sans | 400, 500, 600 | All UI text, labels, body copy |
+| Mono / Data | IBM Plex Mono | 400, 500 | VM names, OS strings, code |
+
+### Google Fonts Import
+
+```html
+<link
+  href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+```
+
+### CSS Tokens
+
+```css
+--font-display:   "DM Serif Display", Georgia, serif;
+--font-body:      "IBM Plex Sans", system-ui, sans-serif;
+--font-mono:      "IBM Plex Mono", "Courier New", monospace;
+
+--text-xs:    0.75rem;
+--text-sm:    0.875rem;
+--text-base:  1rem;
+--text-lg:    1.125rem;
+--text-xl:    1.25rem;
+--text-2xl:   1.5rem;
+--text-3xl:   1.875rem;
+--text-4xl:   2.25rem;
+
+--font-weight-normal:    400;
+--font-weight-medium:    500;
+--font-weight-semibold:  600;
+
+--leading-tight:    1.25;
+--leading-snug:     1.375;
+--leading-normal:   1.5;
+--leading-relaxed:  1.625;
+```
+
+---
+
+## Spacing
+
+8-point scale:
+
+```css
+--space-1:   0.25rem;   /*  4px */
+--space-2:   0.5rem;    /*  8px */
+--space-3:   0.75rem;   /* 12px */
+--space-4:   1rem;      /* 16px */
+--space-5:   1.25rem;   /* 20px */
+--space-6:   1.5rem;    /* 24px */
+--space-8:   2rem;      /* 32px */
+--space-10:  2.5rem;    /* 40px */
+--space-12:  3rem;      /* 48px */
+--space-16:  4rem;      /* 64px */
+--space-20:  5rem;      /* 80px */
+--space-24:  6rem;      /* 96px */
+```
+
+---
+
+## Border Radius
+
+```css
+--radius-sm:    4px;
+--radius-md:    8px;
+--radius-lg:    12px;
+--radius-xl:    16px;
+--radius-full:  9999px;
+```
+
+---
+
+## Shadows
+
+```css
+--shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.4);
+--shadow-md:  0 4px 6px rgba(0, 0, 0, 0.4);
+--shadow-lg:  0 10px 15px rgba(0, 0, 0, 0.4);
+--shadow-xl:  0 20px 25px rgba(0, 0, 0, 0.5);
+```
+
+---
+
+## Layout
+
+```css
+--container-max:  1200px;
+--header-height:  64px;
+```
+
+---
+
+## Base Styles
+
+```css
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+```
+
+---
+
+## Output Spreadsheet Colors
+
+For the Excel output generated by the backend, use these hex values directly (openpyxl doesn't use CSS vars):
+
+| Tier | Row Fill | Font Color |
+|------|----------|------------|
+| Officially Supported | `052E1A` | `10B981` |
+| Unofficially Supported | `1E1035` | `8B5CF6` |
+| Supported VDI VM | `042322` | `14B8A6` |
+| Needs Review | `2D1A00` | `F59E0B` |
+| Needs Additional Info | `00082F` | `0028FA` |
+| Not Supported | `2D0A14` | `F43F5E` |
+
+Header background: `0A0D12`
+Header accent: `0028FA`
