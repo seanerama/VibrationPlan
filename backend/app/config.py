@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     FUZZY_MATCH_THRESHOLD: float = 70.0
     MAX_UPLOAD_SIZE_MB: int = 10
+    FRONTEND_URL: str = ""  # Set in production to restrict CORS origins
 
 
 settings = Settings()
